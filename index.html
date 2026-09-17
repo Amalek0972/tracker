@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Трекер">
+<meta name="theme-color" content="#f0f2f9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1116" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23g)'/%3E%3Cpath d='M140 260 L220 340 L380 180' stroke='white' stroke-width='48' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
+<title>Трекер привычек</title>
+<style>
+  :root{
+    --bg:#f0f2f9; --card:#fff; --text:#1a1d2e; --muted:#8b91a8;
+    --accent:#6366f1; --accent-2:#8b5cf6; --accent-soft:#e8eaff;
+    --green:#10b981; --green-soft:#d1fae5;
+    --red:#ef4444; --red-soft:#fee2e2;
+    --divider:#eef0f7; --input:#f4f5fb; --input-border:#e2e5f0;
+    --radius:18px;
+    --shadow:0 2px 12px rgba(30,35,70,.06);
+    --tab-bg:rgba(255,255,255,.92);
+    --tab-border:rgba(0,0,0,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1116; --card:#1a1d25; --text:#f2f3f7; --muted:#8b91a8;
+      --accent:#818cf8; --accent-2:#a78bfa; --accent-soft:#262a3d;
+      --green:#34d399; --green-soft:#0e3a2e;
+      --red:#f87171; --red-soft:#3a1c1c;
+      --divider:#262a35; --input:#242833; --input-border:#2f3443;
+      --shadow:0 2px 12px rgba(0,0,0,.35);
+      --tab-bg:rgba(20,23,30,.92);
+      --tab-border:rgba(255,255,255,.06);
+    }
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+    background:var(--bg);color:var(--text);font-size:15px;line-height:1.4;
+    min-height:100vh;
+    padding:env(safe-area-inset-top) 0 calc(90px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased;
+    transition:background .2s, color .2s;
+  }
+  .header{padding:20px 20px 8px}
+  .header h1{font-size:26px;font-weight:700;margin:0 0 2px;letter-spacing:-.5px}
+  .header .sub{color:var(--muted);margin:0;font-size:13px}
+  .content{padding:0 16px}
+  .tab-panel{display:none;animation:fade .2s ease}
+  .tab-panel.active{display:block}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+
+  /* Install hint */
+  .install-hint{
+    margin:0 16px 12px;padding:12px 14px;background:var(--accent-soft);
+    color:var(--accent);border-radius:14px;font-size:13px;font-weight:500;
+    display:flex;align-items:center;gap:10px;
+  }
+  .install-hint button{
+    margin-left:auto;background:var(--accent);color:#fff;border:none;
+    padding:6px 12px;border-radius:9px;font-size:12px;font-weight:600;font-family:inherit;
+  }
+
+  /* Tabs */
+  .tabs{
+    position:fixed;left:0;right:0;bottom:0;
+    display:flex;justify-content:space-around;align-items:center;
+    background:var(--tab-bg);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-top:1px solid var(--tab-border);
+    padding:8px 8px calc(6px + env(safe-area-inset-bottom));
+    z-index:50;
+  }
+  .tab-btn{
+    flex:1;background:none;border:none;font-family:inherit;
+    display:flex;flex-direction:column;align-items:center;gap:2px;
+    padding:6px 4px;color:var(--muted);cursor:pointer;
+    border-radius:12px;transition:color .15s;
+  }
+  .tab-btn .tab-icon{font-size:22px;line-height:1}
+  .tab-btn .tab-label{font-size:11px;font-weight:600;letter-spacing:.2px}
+  .tab-btn.active{color:var(--accent)}
+
+  /* Add card */
+  .add-card{
+    display:flex;gap:8px;background:var(--card);border-radius:var(--radius);
+    padding:8px;box-shadow:var(--shadow);margin:8px 0 16px;
+  }
+  .emoji-input,.name-input{
+    border:none;outline:none;font-family:inherit;font-size:15px;
+    background:transparent;color:var(--text);padding:10px 12px;
+    border-radius:12px;transition:background .15s;
+  }
+  .emoji-input{width:52px;text-align:center;font-size:20px;background:var(--input)}
+  .name-input{flex:1;min-width:0}
+  .name-input:focus{background:var(--input)}
+  .add-btn{
+    width:44px;height:44px;border:none;border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;font-size:24px;font-weight:300;cursor:pointer;line-height:1;
+    flex-shrink:0;transition:transform .1s;
+  }
+  .add-btn:active{transform:scale(.94)}
+
+  /* Habit card */
+  .habits{display:flex;flex-direction:column;gap:12px}
+  .habit{
+    background:var(--card);border-radius:var(--radius);padding:14px;
+    box-shadow:var(--shadow);animation:slideIn .25s ease;
+  }
+  @keyframes slideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+  .habit-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .habit-emoji{font-size:22px;line-height:1}
+  .habit-name{flex:1;font-weight:600;font-size:15px;word-break:break-word;min-width:0}
+  .habit-pct{
+    font-size:12px;font-weight:700;color:var(--accent);
+    background:var(--accent-soft);padding:3px 8px;border-radius:10px;flex-shrink:0;
+  }
+  .habit-streak{
+    font-size:12px;font-weight:700;color:#f59e0b;
+    padding:3px 6px;flex-shrink:0;
+  }
+  .habit-del{
+    background:none;border:none;color:var(--muted);font-size:22px;
+    cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;
+  }
+  .habit-del:active{color:var(--red)}
+
+  .days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+  .day{
+    border:none;background:var(--input);border-radius:11px;
+    padding:7px 0 6px;display:flex;flex-direction:column;
+    align-items:center;gap:2px;cursor:pointer;font-family:inherit;
+    transition:transform .1s, background .15s, color .15s;
+    color:var(--text);position:relative;
+  }
+  .day .wd{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.3px}
+  .day .dn{font-size:14px;font-weight:700;line-height:1}
+  .day:active{transform:scale(.92)}
+  .day.done{background:var(--green);color:#fff}
+  .day.done .wd{color:rgba(255,255,255,.85)}
+  .day.missed{background:var(--red);color:#fff}
+  .day.missed .wd{color:rgba(255,255,255,.85)}
+  .day.today{box-shadow:inset 0 0 0 2px var(--accent)}
+  .day.today.done,.day.today.missed{box-shadow:inset 0 0 0 2px rgba(255,255,255,.7)}
+  .day.disabled{opacity:.3;pointer-events:none}
+
+  .habit-foot{
+    display:flex;align-items:center;gap:8px;
+    margin-top:12px;padding-top:10px;border-top:1px solid var(--divider);
+  }
+  .foot-label{font-size:12px;color:var(--muted);font-weight:600}
+  .time-input{
+    font-family:inherit;font-size:14px;padding:6px 10px;
+    border:1px solid var(--input-border);border-radius:10px;outline:none;
+    background:var(--input);color:var(--text);
+  }
+  .time-input:focus{border-color:var(--accent)}
+  .clear-btn{
+    margin-left:auto;background:none;border:none;color:var(--muted);
+    font-size:12px;font-family:inherit;cursor:pointer;padding:4px 6px;
+  }
+
+  /* Empty */
+  .empty{
+    text-align:center;padding:44px 20px;color:var(--muted);
+    background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
+  }
+  .empty-icon{font-size:40px;margin-bottom:10px}
+  .empty-text{font-size:15px;font-weight:500}
+  .empty-hint{font-size:13px;margin-top:6px;opacity:.8}
+
+  /* Stats */
+  .period-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+  .period-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+  .period-title{font-size:11px;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+  .period-bar{
+    height:10px;background:var(--red-soft);border-radius:5px;overflow:hidden;
+    margin-bottom:10px;display:flex;
+  }
+  .period-bar .seg-done{background:var(--green);height:100%;transition:width .4s}
+  .period-bar .seg-miss{background:var(--red);height:100%;transition:width .4s}
+  .period-nums{display:flex;justify-content:space-between;font-size:12px;font-weight:700}
+  .num-done{color:var(--green)}
+  .num-miss{color:var(--red)}
+  .period-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+  .section-title{
+    font-size:13px;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.5px;
+    margin:20px 0 10px 4px;
+  }
+  .section-title:first-child{margin-top:0}
+
+  /* Month calendar */
+  .cal-chips{
+    display:flex;gap:8px;overflow-x:auto;padding:2px 4px 12px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .cal-chips::-webkit-scrollbar{display:none}
+  .chip{
+    flex-shrink:0;padding:7px 14px;border-radius:20px;border:none;
+    background:var(--card);color:var(--text);font-family:inherit;
+    font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;
+    box-shadow:var(--shadow);white-space:nowrap;
+  }
+  .chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
+  .chip:active{transform:scale(.95)}
+
+  .cal-card{
+    background:var(--card);border-radius:var(--radius);padding:14px;
+    box-shadow:var(--shadow);margin-bottom:20px;
+  }
+  .cal-head{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin-bottom:12px;
+  }
+  .cal-month{font-size:15px;font-weight:700}
+  .cal-summary{font-size:12px;color:var(--muted);font-weight:600}
+  .cal-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+  }
+  .cal-wd{
+    text-align:center;font-size:10px;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.3px;padding:4px 0 6px;
+  }
+  .cal-cell{
+    aspect-ratio:1;border-radius:9px;background:var(--input);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;color:var(--text);
+    position:relative;overflow:hidden;
+    background-image:linear-gradient(90deg,
+      var(--green) 0%, var(--green) var(--done,0%),
+      var(--red) var(--done,0%), var(--red) 100%);
+  }
+  .cal-cell.empty{background-image:none;background:transparent}
+  .cal-cell.future{
+    background-image:none;background:var(--input);color:var(--muted);opacity:.5;
+  }
+  .cal-cell.na{
+    background-image:none;background:var(--input);color:var(--muted);opacity:.35;
+  }
+  .cal-cell .num{position:relative;z-index:1;mix-blend-mode:normal}
+  .cal-cell.full{background-image:none;background:var(--green);color:#fff}
+  .cal-cell.none{background-image:none;background:var(--red);color:#fff}
+  .cal-cell.today{box-shadow:inset 0 0 0 2px var(--accent);z-index:2}
+
+  /* Per-habit stats */
+  .habit-stat{
+    background:var(--card);border-radius:14px;padding:12px 14px;
+    box-shadow:var(--shadow);margin-bottom:10px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .habit-stat-emoji{font-size:22px}
+  .habit-stat-body{flex:1;min-width:0}
+  .habit-stat-name{font-weight:600;font-size:14px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .habit-stat-bar{
+    height:6px;background:var(--red-soft);border-radius:3px;overflow:hidden;display:flex;
+    margin-bottom:4px;
+  }
+  .habit-stat-bar .seg-done{background:var(--green)}
+  .habit-stat-bar .seg-miss{background:var(--red)}
+  .habit-stat-meta{font-size:11px;color:var(--muted);display:flex;gap:8px}
+  .habit-stat-meta b{color:var(--text);font-weight:600}
+  .habit-stat-streak{
+    font-size:12px;font-weight:700;color:#f59e0b;white-space:nowrap;
+  }
+
+  /* Thoughts */
+  .thought-form{
+    background:var(--card);border-radius:var(--radius);padding:12px;
+    box-shadow:var(--shadow);margin-bottom:16px;
+  }
+  #thoughtInput{
+    width:100%;min-height:88px;resize:vertical;
+    font-family:inherit;font-size:15px;line-height:1.4;
+    border:none;outline:none;background:transparent;
+    color:var(--text);padding:8px 4px;
+  }
+  .thought-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px;border-top:1px solid var(--divider)}
+  .thought-hint{font-size:11px;color:var(--muted)}
+  .save-thought{
+    padding:9px 18px;border:none;border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;font-family:inherit;font-size:14px;font-weight:600;
+    cursor:pointer;transition:transform .1s;
+  }
+  .save-thought:active{transform:scale(.96)}
+  .save-thought:disabled{opacity:.5}
+  .thought{
+    background:var(--card);border-radius:14px;padding:14px;
+    box-shadow:var(--shadow);margin-bottom:10px;position:relative;
+  }
+  .thought-date{
+    font-size:11px;color:var(--muted);font-weight:600;
+    letter-spacing:.3px;margin-bottom:6px;
+  }
+  .thought-text{
+    font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;
+  }
+  .thought-del{
+    position:absolute;top:10px;right:10px;
+    background:none;border:none;color:var(--muted);
+    font-size:20px;cursor:pointer;padding:0 4px;line-height:1;
+  }
+  .thought-del:active{color:var(--red)}
+
+  @media (max-width:360px){
+    .day .dn{font-size:13px}
+    .day .wd{font-size:8px}
+    .cal-cell{font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1 id="pageTitle">Привычки</h1>
+  <p class="sub" id="pageSub"></p>
+</header>
+
+<div id="installHint" class="install-hint" hidden>
+  <span>📲 Добавьте на экран «Домой», чтобы получать уведомления</span>
+  <button onclick="this.parentNode.hidden=true">Понятно</button>
+</div>
+
+<main class="content">
+
+  <!-- ===== HABITS ===== -->
+  <section id="tab-habits" class="tab-panel active">
+    <div class="add-card">
+      <input type="text" id="emojiInput" class="emoji-input" placeholder="💧" maxlength="4" autocomplete="off">
+      <input type="text" id="nameInput" class="name-input" placeholder="Новая привычка..." autocomplete="off">
+      <button id="addBtn" class="add-btn" title="Добавить">+</button>
+    </div>
+    <div id="habitsList" class="habits"></div>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <section id="tab-stats" class="tab-panel">
+    <div class="period-cards">
+      <div class="period-card">
+        <div class="period-title">Эта неделя</div>
+        <div class="period-bar">
+          <div class="seg-done" id="weekBarDone" style="width:0%"></div>
+          <div class="seg-miss" id="weekBarMiss" style="width:0%"></div>
+        </div>
+        <div class="period-nums">
+          <span class="num-done" id="weekDonePct">✅ 0%</span>
+          <span class="num-miss" id="weekMissPct">❌ 0%</span>
+        </div>
+        <div class="period-sub" id="weekSub">нет данных</div>
+      </div>
+      <div class="period-card">
+        <div class="period-title" id="monthTitle">Этот месяц</div>
+        <div class="period-bar">
+          <div class="seg-done" id="monthBarDone" style="width:0%"></div>
+          <div class="seg-miss" id="monthBarMiss" style="width:0%"></div>
+        </div>
+        <div class="period-nums">
+          <span class="num-done" id="monthDonePct">✅ 0%</span>
+          <span class="num-miss" id="monthMissPct">❌ 0%</span>
+        </div>
+        <div class="period-sub" id="monthSub">нет данных</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Календарь месяца</h2>
+    <div class="cal-chips" id="calChips"></div>
+    <div class="cal-card">
+      <div class="cal-head">
+        <div class="cal-month" id="calMonth"></div>
+        <div class="cal-summary" id="calSummary"></div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+
+    <h2 class="section-title">По привычкам</h2>
+    <div id="habitStatsList"></div>
+  </section>
+
+  <!-- ===== THOUGHTS ===== -->
+  <section id="tab-thoughts" class="tab-panel">
+    <div class="thought-form">
+      <textarea id="thoughtInput" placeholder="Запишите мысль, идею или настроение..."></textarea>
+      <div class="thought-actions">
+        <span class="thought-hint">Локально на устройстве</span>
+        <button id="saveThought" class="save-thought" disabled>Сохранить</button>
+      </div>
+    </div>
+    <h2 class="section-title">Записи</h2>
+    <div id="thoughtsList"></div>
+  </section>
+
+</main>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="habits">
+    <span class="tab-icon">📋</span><span class="tab-label">Привычки</span>
+  </button>
+  <button class="tab-btn" data-tab="stats">
+    <span class="tab-icon">📊</span><span class="tab-label">Статистика</span>
+  </button>
+  <button class="tab-btn" data-tab="thoughts">
+    <span class="tab-icon">📝</span><span class="tab-label">Мысли</span>
+  </button>
+</nav>
+
+<script>
+(function(){
+  'use strict';
+
+  const STORAGE_KEY = 'tracker_v3';
+  const WEEKDAYS = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const MONTHS_FULL = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                       'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня',
+                      'июля','августа','сентября','октября','ноября','декабря'];
+
+  const $ = id => document.getElementById(id);
+
+  let state = {
+    habits: [],
+    thoughts: [],
+    lastNotified: {},
+    calendarSelected: 'all'
+  };
+
+  // ---------- UTIL ----------
+  const startOfDay = d => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
+  const addDays = (d,n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+  function dateKey(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+  function currentWeek(){
+    const today = startOfDay(new Date());
+    const dow = (today.getDay() + 6) % 7;
+    const monday = addDays(today, -dow);
+    return Array.from({length:7}, (_,i) => addDays(monday, i));
+  }
+  function currentMonthDays(){
+    const today = new Date();
+    const y = today.getFullYear(), m = today.getMonth();
+    const dim = new Date(y, m+1, 0).getDate();
+    return Array.from({length:dim}, (_,i) => new Date(y, m, i+1));
+  }
+
+  // ---------- STORAGE ----------
+  function load(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        const p = JSON.parse(raw);
+        if(Array.isArray(p.habits)) state.habits = p.habits;
+        if(Array.isArray(p.thoughts)) state.thoughts = p.thoughts;
+        if(p.lastNotified && typeof p.lastNotified === 'object') state.lastNotified = p.lastNotified;
+        if(p.calendarSelected) state.calendarSelected = p.calendarSelected;
+      }
+    } catch(e){ console.warn(e); }
+  }
+  function save(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e){ console.warn(e); }
+  }
+
+  // ---------- STATS ----------
+  function habitPeriodStats(h, days){
+    const today = startOfDay(new Date());
+    let done = 0, missed = 0;
+    for(const d of days){
+      if(d > today) continue;
+      const k = dateKey(d);
+      if(h.createdAt && k < h.createdAt) continue;
+      if(h.history[k]) done++;
+      else missed++;
+    }
+    return { done, missed, total: done + missed };
+  }
+  function overallPeriodStats(days){
+    let done = 0, missed = 0;
+    for(const h of state.habits){
+      const s = habitPeriodStats(h, days);
+      done += s.done; missed += s.missed;
+    }
+    return { done, missed, total: done + missed };
+  }
+  function getStreak(h){
+    let streak = 0;
+    const today = startOfDay(new Date());
+    let d = today;
+    if(!h.history[dateKey(d)]) d = addDays(d, -1);
+    while(true){
+      const k = dateKey(d);
+      if(h.createdAt && k < h.createdAt) break;
+      if(h.history[k]){ streak++; d = addDays(d, -1); }
+      else break;
+      if(streak > 3650) break;
+    }
+    return streak;
+  }
+
+  // ---------- RENDER: HABITS ----------
+  function renderHabits(){
+    const list = $('habitsList');
+    list.innerHTML = '';
+
+    if(!state.habits.length){
+      list.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">🌱</div>
+          <div class="empty-text">Пока нет привычек</div>
+          <div class="empty-hint">Добавьте первую выше</div>
+        </div>`;
+      return;
+    }
+
+    const week = currentWeek();
+    const today = startOfDay(new Date());
+
+    for(const h of state.habits){
+      const card = document.createElement('div');
+      card.className = 'habit';
+
+      const ws = habitPeriodStats(h, week);
+      const pct = ws.total ? Math.round(ws.done / ws.total * 100) : 0;
+      const streak = getStreak(h);
+
+      const head = document.createElement('div');
+      head.className = 'habit-head';
+      head.innerHTML = `
+        <div class="habit-emoji">${escapeHtml(h.emoji || '✅')}</div>
+        <div class="habit-name">${escapeHtml(h.name)}</div>
+        ${streak > 0 ? `<div class="habit-streak">🔥${streak}</div>` : ''}
+        <div class="habit-pct">${pct}%</div>`;
+
+      const del = document.createElement('button');
+      del.className = 'habit-del';
+      del.textContent = '×';
+      del.onclick = () => {
+        if(confirm(`Удалить «${h.name}»?`)){
+          state.habits = state.habits.filter(x => x.id !== h.id);
+          if(state.calendarSelected === h.id) state.calendarSelected = 'all';
+          save(); renderAll();
+        }
+      };
+      head.appendChild(del);
+      card.appendChild(head);
+
+      const days = document.createElement('div');
+      days.className = 'days';
+
+      week.forEach((d, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'day';
+        const k = dateKey(d);
+        const isDone   = !!h.history[k];
+        const isToday  = d.getTime() === today.getTime();
+        const isPast   = d.getTime() <  today.getTime();
+        const isFuture = d.getTime() >  today.getTime();
+        const beforeCreate = h.createdAt && k < h.createdAt;
+
+        if(isDone) btn.classList.add('done');
+        else if(isPast && !beforeCreate) btn.classList.add('missed');
+        if(isToday) btn.classList.add('today');
+        if(isFuture || beforeCreate) btn.classList.add('disabled');
+
+        btn.innerHTML = `<span class="wd">${WEEKDAYS[i]}</span><span class="dn">${d.getDate()}</span>`;
+        if(!isFuture && !beforeCreate){
+          btn.onclick = () => toggleDay(h.id, k);
+        }
+        days.appendChild(btn);
+      });
+
+      card.appendChild(days);
+
+      const foot = document.createElement('div');
+      foot.className = 'habit-foot';
+      foot.innerHTML = `<span class="foot-label">⏰</span>`;
+
+      const timeInput = document.createElement('input');
+      timeInput.type = 'time';
+      timeInput.className = 'time-input';
+      timeInput.value = h.reminderTime || '';
+      timeInput.onchange = () => {
+        h.reminderTime = timeInput.value || '';
+        save();
+        if(h.reminderTime) ensureNotifPermission();
+      };
+      foot.appendChild(timeInput);
+
+      if(h.reminderTime){
+        const clear = document.createElement('button');
+        clear.className = 'clear-btn';
+        clear.textContent = 'убрать';
+        clear.onclick = () => { h.reminderTime = ''; save(); renderAll(); };
+        foot.appendChild(clear);
+      }
+
+      card.appendChild(foot);
+      list.appendChild(card);
+    }
+  }
+
+  function toggleDay(id, key){
+    const h = state.habits.find(x => x.id === id);
+    if(!h) return;
+    if(h.history[key]) delete h.history[key];
+    else h.history[key] = true;
+    save(); renderAll();
+  }
+
+  // ---------- RENDER: STATS ----------
+  function renderStats(){
+    const weekDays = currentWeek();
+    const monthDays = currentMonthDays();
+
+    const wk = overallPeriodStats(weekDays);
+    const mo = overallPeriodStats(monthDays);
+
+    const wkDonePct = wk.total ? Math.round(wk.done / wk.total * 100) : 0;
+    const wkMissPct = wk.total ? 100 - wkDonePct : 0;
+    $('weekBarDone').style.width = wkDonePct + '%';
+    $('weekBarMiss').style.width = wkMissPct + '%';
+    $('weekDonePct').textContent = `✅ ${wkDonePct}%`;
+    $('weekMissPct').textContent = `❌ ${wkMissPct}%`;
+    $('weekSub').textContent = wk.total ? `${wk.done} из ${wk.total}` : 'нет данных';
+
+    const moDonePct = mo.total ? Math.round(mo.done / mo.total * 100) : 0;
+    const moMissPct = mo.total ? 100 - moDonePct : 0;
+    const now = new Date();
+    $('monthTitle').textContent = MONTHS_FULL[now.getMonth()].toUpperCase();
+    $('monthBarDone').style.width = moDonePct + '%';
+    $('monthBarMiss').style.width = moMissPct + '%';
+    $('monthDonePct').textContent = `✅ ${moDonePct}%`;
+    $('monthMissPct').textContent = `❌ ${moMissPct}%`;
+    $('monthSub').textContent = mo.total ? `${mo.done} из ${mo.total}` : 'нет данных';
+
+    // per-habit
+    const list = $('habitStatsList');
+    list.innerHTML = '';
+    if(!state.habits.length){
+      list.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">📊</div>
+          <div class="empty-text">Нет данных</div>
+          <div class="empty-hint">Добавьте привычку, чтобы увидеть статистику</div>
+        </div>`;
+    } else {
+      for(const h of state.habits){
+        const ws = habitPeriodStats(h, weekDays);
+        const ms = habitPeriodStats(h, monthDays);
+        const wPct = ws.total ? Math.round(ws.done / ws.total * 100) : 0;
+        const mPct = ms.total ? Math.round(ms.done / ms.total * 100) : 0;
+        const streak = getStreak(h);
+
+        const row = document.createElement('div');
+        row.className = 'habit-stat';
+        row.innerHTML = `
+          <div class="habit-stat-emoji">${escapeHtml(h.emoji || '✅')}</div>
+          <div class="habit-stat-body">
+            <div class="habit-stat-name">${escapeHtml(h.name)}</div>
+            <div class="habit-stat-bar">
+              <div class="seg-done" style="width:${wPct}%"></div>
+              <div class="seg-miss" style="width:${100-wPct}%"></div>
+            </div>
+            <div class="habit-stat-meta">
+              <span>Неделя: <b>${wPct}%</b></span>
+              <span>Месяц: <b>${mPct}%</b></span>
+            </div>
+          </div>
+          ${streak > 0 ? `<div class="habit-stat-streak">🔥${streak}</div>` : ''}`;
+        list.appendChild(row);
+      }
+    }
+
+    renderCalendar();
+  }
+
+  // ---------- RENDER: MONTH CALENDAR ----------
+  function renderCalendar(){
+    const chips = $('calChips');
+    chips.innerHTML = '';
+
+    const allChip = document.createElement('button');
+    allChip.className = 'chip' + (state.calendarSelected === 'all' ? ' active' : '');
+    allChip.textContent = 'Все привычки';
+    allChip.onclick = () => { state.calendarSelected = 'all'; save(); renderCalendar(); };
+    chips.appendChild(allChip);
+
+    for(const h of state.habits){
+      const chip = document.createElement('button');
+      chip.className = 'chip' + (state.calendarSelected === h.id ? ' active' : '');
+      chip.textContent = `${h.emoji || '✅'} ${h.name}`;
+      chip.onclick = () => { state.calendarSelected = h.id; save(); renderCalendar(); };
+      chips.appendChild(chip);
+    }
+
+    const now = new Date();
+    const y = now.getFullYear(), m = now.getMonth();
+    const dim = new Date(y, m+1, 0).getDate();
+    const firstDow = (new Date(y, m, 1).getDay() + 6) % 7;
+    const today = startOfDay(now);
+
+    $('calMonth').textContent = `${MONTHS_FULL[m]} ${y}`;
+
+    const selected = state.calendarSelected === 'all'
+      ? null
+      : state.habits.find(h => h.id === state.calendarSelected);
+
+    if(state.calendarSelected !== 'all' && !selected){
+      state.calendarSelected = 'all';
+      return renderCalendar();
+    }
+
+    // summary
+    let totalDone = 0, totalMissed = 0;
+    const grid = $('calGrid');
+    grid.innerHTML = '';
+
+    for(const wd of WEEKDAYS){
+      const el = document.createElement('div');
+      el.className = 'cal-wd';
+      el.textContent = wd;
+      grid.appendChild(el);
+    }
+
+    for(let i = 0; i < firstDow; i++){
+      const el = document.createElement('div');
+      el.className = 'cal-cell empty';
+      grid.appendChild(el);
+    }
+
+    for(let day = 1; day <= dim; day++){
+      const d = new Date(y, m, day);
+      const k = dateKey(d);
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell';
+      const num = document.createElement('span');
+      num.className = 'num';
+      num.textContent = day;
+      cell.appendChild(num);
+
+      const isFuture = d > today;
+      if(isFuture){
+        cell.classList.add('future');
+        grid.appendChild(cell);
+        continue;
+      }
+      if(d.getTime() === today.getTime()) cell.classList.add('today');
+
+      let doneCount = 0, missedCount = 0;
+      if(selected){
+        if(selected.createdAt && k < selected.createdAt){
+          cell.classList.add('na');
+        } else {
+          if(selected.history[k]) doneCount = 1;
+          else missedCount = 1;
+        }
+      } else {
+        for(const h of state.habits){
+          if(h.createdAt && k < h.createdAt) continue;
+          if(h.history[k]) doneCount++;
+          else missedCount++;
+        }
+        if(doneCount + missedCount === 0){
+          cell.classList.add('na');
+        }
+      }
+
+      const total = doneCount + missedCount;
+      if(total > 0){
+        totalDone += doneCount;
+        totalMissed += missedCount;
+        const pct = Math.round(doneCount / total * 100);
+        if(pct === 100){
+          cell.classList.add('full');
+        } else if(pct === 0){
+          cell.classList.add('none');
+        } else {
+          cell.style.setProperty('--done', pct + '%');
+        }
+      }
+      grid.appendChild(cell);
+    }
+
+    const sumTotal = totalDone + totalMissed;
+    const sumPct = sumTotal ? Math.round(totalDone / sumTotal * 100) : 0;
+    $('calSummary').textContent = sumTotal
+      ? `✅ ${sumPct}% · ❌ ${100 - sumPct}%`
+      : '';
+  }
+
+  // ---------- RENDER: THOUGHTS ----------
+  function renderThoughts(){
+    const list = $('thoughtsList');
+    list.innerHTML = '';
+    if(!state.thoughts.length){
+      list.innerHTML = `
+        <div class="empty">
+          <div class="empty-icon">📝</div>
+          <div class="empty-text">Записей пока нет</div>
+          <div class="empty-hint">Напишите первую мысль выше</div>
+        </div>`;
+      return;
+    }
+    const sorted = [...state.thoughts].sort((a,b) => b.createdAt - a.createdAt);
+    for(const t of sorted){
+      const d = new Date(t.createdAt);
+      const dateStr = `${d.getDate()} ${MONTHS_GEN[d.getMonth()]} ${d.getFullYear()}, `
+        + `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      const el = document.createElement('div');
+      el.className = 'thought';
+      el.innerHTML = `
+        <button class="thought-del" title="Удалить">×</button>
+        <div class="thought-date">${dateStr}</div>
+        <div class="thought-text">${escapeHtml(t.text)}</div>`;
+      el.querySelector('.thought-del').onclick = () => {
+        if(confirm('Удалить запись?')){
+          state.thoughts = state.thoughts.filter(x => x.id !== t.id);
+          save(); renderThoughts();
+        }
+      };
+      list.appendChild(el);
+    }
+  }
+
+  function renderHeader(){
+    const now = new Date();
+    const dow = (now.getDay() + 6) % 7;
+    $('pageSub').textContent = `${WEEKDAYS[dow]}, ${now.getDate()} ${MONTHS_GEN[now.getMonth()]}`;
+  }
+
+  function renderAll(){
+    renderHeader();
+    renderHabits();
+    renderStats();
+    renderThoughts();
+  }
+
+  // ---------- ADD HABIT ----------
+  function addHabit(){
+    const nameInput = $('nameInput');
+    const emojiInput = $('emojiInput');
+    const name = nameInput.value.trim();
+    if(!name){ nameInput.focus(); return; }
+    if(state.habits.length >= 20){ alert('Максимум 20 привычек'); return; }
+
+    state.habits.push({
+      id: 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      name,
+      emoji: emojiInput.value.trim() || '✅',
+      createdAt: dateKey(startOfDay(new Date())),
+      reminderTime: '',
+      history: {}
+    });
+    nameInput.value = '';
+    emojiInput.value = '';
+    save(); renderAll();
+    nameInput.focus();
+  }
+
+  // ---------- THOUGHTS ----------
+  function saveThought(){
+    const input = $('thoughtInput');
+    const text = input.value.trim();
+    if(!text) return;
+    state.thoughts.push({
+      id: 't_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      text, createdAt: Date.now()
+    });
+    input.value = '';
+    $('saveThought').disabled = true;
+    save(); renderThoughts();
+  }
+
+  // ---------- NOTIFICATIONS (via Service Worker) ----------
+  async function ensureNotifPermission(){
+    if(!('Notification' in window)) return false;
+    if(Notification.permission === 'granted') return true;
+    if(Notification.permission === 'denied') return false;
+    try {
+      const p = await Notification.requestPermission();
+      return p === 'granted';
+    } catch(e){ return false; }
+  }
+
+  async function showNotification(title, body, tag){
+    if(!('Notification' in window) || Notification.permission !== 'granted') return;
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      await reg.showNotification(title, {
+        body,
+        tag: tag || 'reminder',
+        icon: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Crect width=%22512%22 height=%22512%22 rx=%22112%22 fill=%22%236366f1%22/%3E%3Cpath d=%22M140 260 L220 340 L380 180%22 stroke=%22white%22 stroke-width=%2248%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 fill=%22none%22/%3E%3C/svg%3E',
+        badge: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Crect width=%22512%22 height=%22512%22 fill=%22%236366f1%22/%3E%3C/svg%3E',
+        data: { url: location.href }
+      });
+    } catch(e){ console.warn('notify error', e); }
+  }
+
+  function checkReminders(){
+    if(!('Notification' in window) || Notification.permission !== 'granted') return;
+    const now = new Date();
+    const hhmm = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    const today = dateKey(now);
+
+    for(const h of state.habits){
+      if(!h.reminderTime) continue;
+      if(h.reminderTime !== hhmm) continue;
+      const key = h.id + ':' + today;
+      if(state.lastNotified[key]) continue;
+      state.lastNotified[key] = true;
+      save();
+      showNotification(`${h.emoji || '✅'} ${h.name}`, 'Пора отметить привычку', key);
+    }
+  }
+
+  // ---------- TABS ----------
+  function switchTab(name){
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const panel = $('tab-' + name);
+    const btn = document.querySelector(`.tab-btn[data-tab="${name}"]`);
+    if(panel) panel.classList.add('active');
+    if(btn) btn.classList.add('active');
+
+    const titles = { habits: 'Привычки', stats: 'Статистика', thoughts: 'Мысли' };
+    $('pageTitle').textContent = titles[name] || '';
+    renderHeader();
+
+    if(name === 'stats') renderStats();
+    if(name === 'thoughts') renderThoughts();
+    if(name === 'habits') renderHabits();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ---------- PWA ----------
+  function isStandalone(){
+    return window.navigator.standalone === true
+      || window.matchMedia('(display-mode: standalone)').matches;
+  }
+  function isIOS(){
+    return /iPad|iPhone|iPod/.test(navigator.userAgent)
+      || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+
+  async function registerSW(){
+    if(!('serviceWorker' in navigator)) return null;
+    try {
+      const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+      return reg;
+    } catch(e){ console.warn('SW reg failed', e); return null; }
+  }
+
+  function setupInstallHint(){
+    const hint = $('installHint');
+    if(!hint) return;
+    const dismissed = localStorage.getItem('installHintDismissed') === '1';
+    if(isIOS() && !isStandalone() && !dismissed){
+      hint.hidden = false;
+      hint.querySelector('button').addEventListener('click', () => {
+        localStorage.setItem('installHintDismissed', '1');
+      });
+    }
+  }
+
+  // ---------- INIT ----------
+  async function init(){
+    load();
+    renderAll();
+    setupInstallHint();
+
+    $('addBtn').onclick = addHabit;
+    $('nameInput').addEventListener('keydown', e => {
+      if(e.key === 'Enter') addHabit();
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.onclick = () => switchTab(b.dataset.tab);
+    });
+
+    const tInput = $('thoughtInput');
+    const sBtn = $('saveThought');
+    tInput.addEventListener('input', () => { sBtn.disabled = !tInput.value.trim(); });
+    sBtn.onclick = saveThought;
+
+    await registerSW();
+
+    setInterval(checkReminders, 20000);
+    checkReminders();
+
+    // Тёмная тема — обновляем meta theme-color при смене системной темы
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    mq.addEventListener('change', () => {
+      document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+        // meta уже с media-условиями, ничего не делаем — браузер сам переключит
+      });
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else init();
+})();
+</script>
+</body>
+</html>
