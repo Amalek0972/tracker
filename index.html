@@ -53,18 +53,6 @@
   .tab-panel.active{display:block}
   @keyframes fade{from{opacity:0}to{opacity:1}}
 
-  /* Install hint */
-  .install-hint{
-    margin:0 16px 12px;padding:12px 14px;background:var(--accent-soft);
-    color:var(--accent);border-radius:14px;font-size:13px;font-weight:500;
-    display:flex;align-items:center;gap:10px;
-  }
-  .install-hint button{
-    margin-left:auto;background:var(--accent);color:#fff;border:none;
-    padding:6px 12px;border-radius:9px;font-size:12px;font-weight:600;font-family:inherit;
-  }
-
-  /* Tabs */
   .tabs{
     position:fixed;left:0;right:0;bottom:0;
     display:flex;justify-content:space-around;align-items:center;
@@ -82,10 +70,113 @@
     border-radius:12px;transition:color .15s;
   }
   .tab-btn .tab-icon{font-size:22px;line-height:1}
-  .tab-btn .tab-label{font-size:11px;font-weight:600;letter-spacing:.2px}
+  .tab-btn .tab-label{font-size:10px;font-weight:600;letter-spacing:.2px}
   .tab-btn.active{color:var(--accent)}
 
-  /* Add card */
+  /* ===== PLAN TAB ===== */
+  .today-card{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;border-radius:20px;padding:20px;margin:8px 0 14px;
+    box-shadow:0 6px 20px rgba(99,102,241,.25);
+  }
+  .today-card .wd{font-size:13px;opacity:.85;font-weight:600;letter-spacing:.3px;text-transform:uppercase}
+  .today-card .date{font-size:30px;font-weight:700;margin-top:2px;letter-spacing:-.5px}
+  .today-card .cnt{font-size:13px;opacity:.9;margin-top:8px}
+
+  .plan-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+  .plan-item{
+    display:flex;align-items:center;gap:12px;
+    background:var(--card);border-radius:14px;
+    padding:12px 14px;box-shadow:var(--shadow);
+  }
+  .plan-time{
+    font-weight:700;font-size:14px;color:var(--accent);
+    min-width:48px;font-variant-numeric:tabular-nums;
+  }
+  .plan-text{flex:1;font-size:15px;word-break:break-word;min-width:0}
+  .plan-item.done .plan-text{text-decoration:line-through;color:var(--muted)}
+  .plan-item.done .plan-time{opacity:.5}
+  .plan-check{
+    width:24px;height:24px;border-radius:50%;
+    border:2px solid var(--input-border);background:transparent;
+    cursor:pointer;flex-shrink:0;padding:0;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .15s;
+  }
+  .plan-check.checked{background:var(--green);border-color:var(--green)}
+  .plan-check.checked::after{content:'✓';color:#fff;font-weight:700;font-size:14px;line-height:1}
+  .plan-del{
+    background:none;border:none;color:var(--muted);
+    font-size:22px;cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;
+  }
+  .plan-del:active{color:var(--red)}
+
+  .add-plan{
+    display:flex;gap:6px;background:var(--card);border-radius:14px;
+    padding:6px;box-shadow:var(--shadow);margin-bottom:20px;
+  }
+  .add-plan input[type=time]{
+    border:none;outline:none;font-family:inherit;font-size:14px;
+    background:var(--input);color:var(--text);
+    padding:10px;border-radius:10px;flex-shrink:0;width:96px;
+    font-variant-numeric:tabular-nums;
+  }
+  .add-plan input[type=text]{
+    border:none;outline:none;font-family:inherit;font-size:15px;
+    background:transparent;color:var(--text);
+    padding:10px 12px;border-radius:10px;flex:1;min-width:0;
+  }
+  .add-plan input[type=text]:focus{background:var(--input)}
+  .add-plan-btn{
+    width:44px;height:44px;border:none;border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff;font-size:24px;font-weight:300;cursor:pointer;
+    line-height:1;flex-shrink:0;
+  }
+  .add-plan-btn:active{transform:scale(.94)}
+
+  .week-chips{
+    display:flex;gap:8px;overflow-x:auto;padding:2px 4px 12px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  .week-chips::-webkit-scrollbar{display:none}
+  .chip{
+    flex-shrink:0;padding:8px 14px;border-radius:20px;border:none;
+    background:var(--card);color:var(--text);font-family:inherit;
+    font-size:13px;font-weight:600;cursor:pointer;
+    box-shadow:var(--shadow);white-space:nowrap;
+    transition:all .15s;min-width:52px;text-align:center;
+  }
+  .chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
+  .chip .chip-sub{font-size:10px;opacity:.7;font-weight:500;display:block;margin-top:1px}
+  .chip:active{transform:scale(.95)}
+
+  .edit-plan-row{
+    display:flex;align-items:center;gap:8px;
+    background:var(--card);border-radius:14px;
+    padding:10px 12px;box-shadow:var(--shadow);margin-bottom:8px;
+  }
+  .edit-plan-row input[type=time]{
+    border:none;outline:none;font-family:inherit;font-size:14px;
+    background:var(--input);color:var(--text);
+    padding:6px 8px;border-radius:8px;width:88px;
+    font-variant-numeric:tabular-nums;flex-shrink:0;
+  }
+  .edit-plan-row input[type=text]{
+    border:none;outline:none;font-family:inherit;font-size:15px;
+    background:transparent;color:var(--text);
+    padding:8px 6px;flex:1;min-width:0;border-radius:8px;
+  }
+  .edit-plan-row input[type=text]:focus{background:var(--input)}
+  .edit-plan-row .plan-del{margin-left:auto}
+
+  .empty-plan{
+    text-align:center;padding:24px 20px;color:var(--muted);
+    background:var(--card);border-radius:14px;font-size:14px;
+    box-shadow:var(--shadow);margin-bottom:12px;
+  }
+
+  /* ===== HABITS ===== */
   .add-card{
     display:flex;gap:8px;background:var(--card);border-radius:var(--radius);
     padding:8px;box-shadow:var(--shadow);margin:8px 0 16px;
@@ -106,7 +197,6 @@
   }
   .add-btn:active{transform:scale(.94)}
 
-  /* Habit card */
   .habits{display:flex;flex-direction:column;gap:12px}
   .habit{
     background:var(--card);border-radius:var(--radius);padding:14px;
@@ -120,10 +210,7 @@
     font-size:12px;font-weight:700;color:var(--accent);
     background:var(--accent-soft);padding:3px 8px;border-radius:10px;flex-shrink:0;
   }
-  .habit-streak{
-    font-size:12px;font-weight:700;color:#f59e0b;
-    padding:3px 6px;flex-shrink:0;
-  }
+  .habit-streak{font-size:12px;font-weight:700;color:#f59e0b;padding:3px 6px;flex-shrink:0}
   .habit-del{
     background:none;border:none;color:var(--muted);font-size:22px;
     cursor:pointer;padding:0 2px;line-height:1;flex-shrink:0;
@@ -135,12 +222,10 @@
     border:none;background:var(--input);border-radius:11px;
     padding:7px 0 6px;display:flex;flex-direction:column;
     align-items:center;gap:2px;cursor:pointer;font-family:inherit;
-    transition:transform .1s, background .15s, color .15s;
     color:var(--text);position:relative;
   }
-  .day .wd{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.3px}
+  .day .wd{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--muted)}
   .day .dn{font-size:14px;font-weight:700;line-height:1}
-  .day:active{transform:scale(.92)}
   .day.done{background:var(--green);color:#fff}
   .day.done .wd{color:rgba(255,255,255,.85)}
   .day.missed{background:var(--red);color:#fff}
@@ -159,13 +244,12 @@
     border:1px solid var(--input-border);border-radius:10px;outline:none;
     background:var(--input);color:var(--text);
   }
-  .time-input:focus{border-color:var(--accent)}
   .clear-btn{
     margin-left:auto;background:none;border:none;color:var(--muted);
     font-size:12px;font-family:inherit;cursor:pointer;padding:4px 6px;
   }
 
-  /* Empty */
+  /* ===== EMPTY ===== */
   .empty{
     text-align:center;padding:44px 20px;color:var(--muted);
     background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
@@ -174,15 +258,12 @@
   .empty-text{font-size:15px;font-weight:500}
   .empty-hint{font-size:13px;margin-top:6px;opacity:.8}
 
-  /* Stats */
+  /* ===== STATS ===== */
   .period-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
   .period-card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
   .period-title{font-size:11px;font-weight:700;color:var(--muted);
     text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
-  .period-bar{
-    height:10px;background:var(--red-soft);border-radius:5px;overflow:hidden;
-    margin-bottom:10px;display:flex;
-  }
+  .period-bar{height:10px;background:var(--red-soft);border-radius:5px;overflow:hidden;margin-bottom:10px;display:flex}
   .period-bar .seg-done{background:var(--green);height:100%;transition:width .4s}
   .period-bar .seg-miss{background:var(--red);height:100%;transition:width .4s}
   .period-nums{display:flex;justify-content:space-between;font-size:12px;font-weight:700}
@@ -192,65 +273,40 @@
 
   .section-title{
     font-size:13px;font-weight:700;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.5px;
-    margin:20px 0 10px 4px;
+    text-transform:uppercase;letter-spacing:.5px;margin:20px 0 10px 4px;
   }
   .section-title:first-child{margin-top:0}
 
-  /* Month calendar */
   .cal-chips{
     display:flex;gap:8px;overflow-x:auto;padding:2px 4px 12px;
     -webkit-overflow-scrolling:touch;scrollbar-width:none;
   }
   .cal-chips::-webkit-scrollbar{display:none}
-  .chip{
-    flex-shrink:0;padding:7px 14px;border-radius:20px;border:none;
-    background:var(--card);color:var(--text);font-family:inherit;
-    font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;
-    box-shadow:var(--shadow);white-space:nowrap;
-  }
-  .chip.active{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
-  .chip:active{transform:scale(.95)}
-
   .cal-card{
     background:var(--card);border-radius:var(--radius);padding:14px;
     box-shadow:var(--shadow);margin-bottom:20px;
   }
-  .cal-head{
-    display:flex;justify-content:space-between;align-items:baseline;
-    margin-bottom:12px;
-  }
+  .cal-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
   .cal-month{font-size:15px;font-weight:700}
   .cal-summary{font-size:12px;color:var(--muted);font-weight:600}
-  .cal-grid{
-    display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
-  }
-  .cal-wd{
-    text-align:center;font-size:10px;font-weight:700;color:var(--muted);
-    text-transform:uppercase;letter-spacing:.3px;padding:4px 0 6px;
-  }
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .cal-wd{text-align:center;font-size:10px;font-weight:700;color:var(--muted);
+    text-transform:uppercase;padding:4px 0 6px}
   .cal-cell{
-    aspect-ratio:1;border-radius:9px;background:var(--input);
+    aspect-ratio:1;border-radius:9px;
     display:flex;align-items:center;justify-content:center;
-    font-size:12px;font-weight:700;color:var(--text);
-    position:relative;overflow:hidden;
+    font-size:12px;font-weight:700;color:var(--text);position:relative;
     background-image:linear-gradient(90deg,
       var(--green) 0%, var(--green) var(--done,0%),
       var(--red) var(--done,0%), var(--red) 100%);
   }
   .cal-cell.empty{background-image:none;background:transparent}
-  .cal-cell.future{
-    background-image:none;background:var(--input);color:var(--muted);opacity:.5;
-  }
-  .cal-cell.na{
-    background-image:none;background:var(--input);color:var(--muted);opacity:.35;
-  }
-  .cal-cell .num{position:relative;z-index:1;mix-blend-mode:normal}
+  .cal-cell.future{background-image:none;background:var(--input);color:var(--muted);opacity:.5}
+  .cal-cell.na{background-image:none;background:var(--input);color:var(--muted);opacity:.35}
   .cal-cell.full{background-image:none;background:var(--green);color:#fff}
   .cal-cell.none{background-image:none;background:var(--red);color:#fff}
   .cal-cell.today{box-shadow:inset 0 0 0 2px var(--accent);z-index:2}
 
-  /* Per-habit stats */
   .habit-stat{
     background:var(--card);border-radius:14px;padding:12px 14px;
     box-shadow:var(--shadow);margin-bottom:10px;
@@ -258,56 +314,41 @@
   }
   .habit-stat-emoji{font-size:22px}
   .habit-stat-body{flex:1;min-width:0}
-  .habit-stat-name{font-weight:600;font-size:14px;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .habit-stat-bar{
-    height:6px;background:var(--red-soft);border-radius:3px;overflow:hidden;display:flex;
-    margin-bottom:4px;
-  }
+  .habit-stat-name{font-weight:600;font-size:14px;margin-bottom:4px;overflow:hidden;
+    text-overflow:ellipsis;white-space:nowrap}
+  .habit-stat-bar{height:6px;background:var(--red-soft);border-radius:3px;
+    overflow:hidden;display:flex;margin-bottom:4px}
   .habit-stat-bar .seg-done{background:var(--green)}
   .habit-stat-bar .seg-miss{background:var(--red)}
   .habit-stat-meta{font-size:11px;color:var(--muted);display:flex;gap:8px}
   .habit-stat-meta b{color:var(--text);font-weight:600}
-  .habit-stat-streak{
-    font-size:12px;font-weight:700;color:#f59e0b;white-space:nowrap;
-  }
+  .habit-stat-streak{font-size:12px;font-weight:700;color:#f59e0b;white-space:nowrap}
 
-  /* Thoughts */
-  .thought-form{
-    background:var(--card);border-radius:var(--radius);padding:12px;
-    box-shadow:var(--shadow);margin-bottom:16px;
-  }
+  /* ===== THOUGHTS ===== */
+  .thought-form{background:var(--card);border-radius:var(--radius);padding:12px;
+    box-shadow:var(--shadow);margin-bottom:16px}
   #thoughtInput{
     width:100%;min-height:88px;resize:vertical;
     font-family:inherit;font-size:15px;line-height:1.4;
     border:none;outline:none;background:transparent;
     color:var(--text);padding:8px 4px;
   }
-  .thought-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:8px;border-top:1px solid var(--divider)}
+  .thought-actions{display:flex;justify-content:space-between;align-items:center;
+    gap:8px;padding-top:8px;border-top:1px solid var(--divider)}
   .thought-hint{font-size:11px;color:var(--muted)}
   .save-thought{
     padding:9px 18px;border:none;border-radius:12px;
     background:linear-gradient(135deg,var(--accent),var(--accent-2));
-    color:#fff;font-family:inherit;font-size:14px;font-weight:600;
-    cursor:pointer;transition:transform .1s;
+    color:#fff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
   }
-  .save-thought:active{transform:scale(.96)}
   .save-thought:disabled{opacity:.5}
-  .thought{
-    background:var(--card);border-radius:14px;padding:14px;
-    box-shadow:var(--shadow);margin-bottom:10px;position:relative;
-  }
-  .thought-date{
-    font-size:11px;color:var(--muted);font-weight:600;
-    letter-spacing:.3px;margin-bottom:6px;
-  }
-  .thought-text{
-    font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word;
-  }
-  .thought-del{
-    position:absolute;top:10px;right:10px;
-    background:none;border:none;color:var(--muted);
-    font-size:20px;cursor:pointer;padding:0 4px;line-height:1;
-  }
+  .thought{background:var(--card);border-radius:14px;padding:14px;
+    box-shadow:var(--shadow);margin-bottom:10px;position:relative}
+  .thought-date{font-size:11px;color:var(--muted);font-weight:600;
+    letter-spacing:.3px;margin-bottom:6px}
+  .thought-text{font-size:15px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+  .thought-del{position:absolute;top:10px;right:10px;
+    background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0 4px}
   .thought-del:active{color:var(--red)}
 
   @media (max-width:360px){
@@ -320,19 +361,35 @@
 <body>
 
 <header class="header">
-  <h1 id="pageTitle">Привычки</h1>
+  <h1 id="pageTitle">План</h1>
   <p class="sub" id="pageSub"></p>
 </header>
 
-<div id="installHint" class="install-hint" hidden>
-  <span>📲 Добавьте на экран «Домой», чтобы получать уведомления</span>
-  <button onclick="this.parentNode.hidden=true">Понятно</button>
-</div>
-
 <main class="content">
 
+  <!-- ===== PLAN ===== -->
+  <section id="tab-plan" class="tab-panel active">
+    <div class="today-card">
+      <div class="wd" id="todayWD">—</div>
+      <div class="date" id="todayDate">—</div>
+      <div class="cnt" id="todayCnt"></div>
+    </div>
+
+    <div class="plan-list" id="todayPlanList"></div>
+
+    <div class="add-plan">
+      <input type="time" id="planTime" value="">
+      <input type="text" id="planText" placeholder="Что делать?" autocomplete="off">
+      <button id="planAddBtn" class="add-plan-btn" title="Добавить">+</button>
+    </div>
+
+    <h2 class="section-title">План на неделю</h2>
+    <div class="week-chips" id="weekChips"></div>
+    <div id="weekEditList"></div>
+  </section>
+
   <!-- ===== HABITS ===== -->
-  <section id="tab-habits" class="tab-panel active">
+  <section id="tab-habits" class="tab-panel">
     <div class="add-card">
       <input type="text" id="emojiInput" class="emoji-input" placeholder="💧" maxlength="4" autocomplete="off">
       <input type="text" id="nameInput" class="name-input" placeholder="Новая привычка..." autocomplete="off">
@@ -400,7 +457,10 @@
 </main>
 
 <nav class="tabs">
-  <button class="tab-btn active" data-tab="habits">
+  <button class="tab-btn active" data-tab="plan">
+    <span class="tab-icon">📅</span><span class="tab-label">План</span>
+  </button>
+  <button class="tab-btn" data-tab="habits">
     <span class="tab-icon">📋</span><span class="tab-label">Привычки</span>
   </button>
   <button class="tab-btn" data-tab="stats">
@@ -415,8 +475,10 @@
 (function(){
   'use strict';
 
-  const STORAGE_KEY = 'tracker_v3';
-  const WEEKDAYS = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const STORAGE_KEY = 'tracker_v4';
+  const WEEKDAYS   = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const WEEKDAYS_FULL = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+  const DAY_KEYS   = ['mon','tue','wed','thu','fri','sat','sun'];
   const MONTHS_FULL = ['Январь','Февраль','Март','Апрель','Май','Июнь',
                        'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
   const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня',
@@ -427,8 +489,13 @@
   let state = {
     habits: [],
     thoughts: [],
+    plan: {
+      mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: []
+    },
+    planChecked: {},  // { "2026-09-18": { planId: true } }
     lastNotified: {},
-    calendarSelected: 'all'
+    calendarSelected: 'all',
+    weekEditDay: null  // какой день недели сейчас редактируется
   };
 
   // ---------- UTIL ----------
@@ -457,17 +524,31 @@
     const dim = new Date(y, m+1, 0).getDate();
     return Array.from({length:dim}, (_,i) => new Date(y, m, i+1));
   }
+  function uid(prefix){
+    return (prefix||'x') + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,7);
+  }
+  function todayDayKey(){
+    const dow = (new Date().getDay() + 6) % 7;
+    return DAY_KEYS[dow];
+  }
 
   // ---------- STORAGE ----------
   function load(){
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY)
+               || localStorage.getItem('tracker_v3');   // миграция со старой версии
       if(raw){
         const p = JSON.parse(raw);
         if(Array.isArray(p.habits)) state.habits = p.habits;
         if(Array.isArray(p.thoughts)) state.thoughts = p.thoughts;
         if(p.lastNotified && typeof p.lastNotified === 'object') state.lastNotified = p.lastNotified;
         if(p.calendarSelected) state.calendarSelected = p.calendarSelected;
+        if(p.plan && typeof p.plan === 'object'){
+          for(const k of DAY_KEYS){
+            if(Array.isArray(p.plan[k])) state.plan[k] = p.plan[k];
+          }
+        }
+        if(p.planChecked && typeof p.planChecked === 'object') state.planChecked = p.planChecked;
       }
     } catch(e){ console.warn(e); }
   }
@@ -476,7 +557,178 @@
     catch(e){ console.warn(e); }
   }
 
-  // ---------- STATS ----------
+  // ==================================================
+  // ============== PLAN TAB ==========================
+  // ==================================================
+
+  function sortPlan(arr){
+    return [...arr].sort((a,b) => {
+      const ta = a.time || '99:99';
+      const tb = b.time || '99:99';
+      return ta.localeCompare(tb);
+    });
+  }
+
+  function renderToday(){
+    const now = new Date();
+    const dow = (now.getDay() + 6) % 7;
+    $('todayWD').textContent = WEEKDAYS_FULL[dow];
+    $('todayDate').textContent = `${now.getDate()} ${MONTHS_GEN[now.getMonth()]}`;
+
+    const key = todayDayKey();
+    const plans = sortPlan(state.plan[key] || []);
+    const todayK = dateKey(startOfDay(now));
+    const checked = state.planChecked[todayK] || {};
+
+    const listEl = $('todayPlanList');
+    listEl.innerHTML = '';
+
+    if(!plans.length){
+      $('todayCnt').textContent = 'Планов на сегодня нет';
+      listEl.innerHTML = `<div class="empty-plan">Добавьте первое дело ниже ↓</div>`;
+      return;
+    }
+
+    const doneCount = plans.filter(p => checked[p.id]).length;
+    $('todayCnt').textContent = plans.length === 1
+      ? `1 дело · ${doneCount ? 'выполнено' : 'не выполнено'}`
+      : `${plans.length} дел · ${doneCount} из ${plans.length} выполнено`;
+
+    for(const p of plans){
+      const isDone = !!checked[p.id];
+      const row = document.createElement('div');
+      row.className = 'plan-item' + (isDone ? ' done' : '');
+      row.innerHTML = `
+        <div class="plan-time">${escapeHtml(p.time || '—')}</div>
+        <div class="plan-text">${escapeHtml(p.text)}</div>
+        <button class="plan-check${isDone ? ' checked' : ''}" aria-label="Готово"></button>`;
+      row.querySelector('.plan-check').onclick = () => togglePlanCheck(p.id);
+      listEl.appendChild(row);
+    }
+  }
+
+  function togglePlanCheck(planId){
+    const k = dateKey(startOfDay(new Date()));
+    if(!state.planChecked[k]) state.planChecked[k] = {};
+    if(state.planChecked[k][planId]) delete state.planChecked[k][planId];
+    else state.planChecked[k][planId] = true;
+    save(); renderToday();
+  }
+
+  function addTodayPlan(){
+    const timeInput = $('planTime');
+    const textInput = $('planText');
+    const text = textInput.value.trim();
+    if(!text){ textInput.focus(); return; }
+
+    const key = todayDayKey();
+    state.plan[key].push({
+      id: uid('p'),
+      time: timeInput.value || '',
+      text
+    });
+    state.plan[key] = sortPlan(state.plan[key]);
+    textInput.value = '';
+    timeInput.value = '';
+    save();
+    renderToday();
+    renderWeekEdit();
+    textInput.focus();
+  }
+
+  function renderWeekChips(){
+    const chips = $('weekChips');
+    chips.innerHTML = '';
+    const todayK = todayDayKey();
+    if(!state.weekEditDay) state.weekEditDay = todayK;
+
+    for(let i = 0; i < 7; i++){
+      const key = DAY_KEYS[i];
+      const chip = document.createElement('button');
+      chip.className = 'chip' + (state.weekEditDay === key ? ' active' : '');
+      const count = (state.plan[key] || []).length;
+      const isToday = key === todayK;
+      chip.innerHTML = `${WEEKDAYS[i]}<span class="chip-sub">${isToday ? 'сегодня' : (count ? count + ' дел' : '—')}</span>`;
+      chip.onclick = () => {
+        state.weekEditDay = key;
+        save();
+        renderWeekChips();
+        renderWeekEdit();
+      };
+      chips.appendChild(chip);
+    }
+  }
+
+  function renderWeekEdit(){
+    const key = state.weekEditDay || todayDayKey();
+    const list = $('weekEditList');
+    list.innerHTML = '';
+
+    const plans = sortPlan(state.plan[key] || []);
+
+    if(!plans.length){
+      list.innerHTML = `<div class="empty-plan">На этот день пока ничего нет</div>`;
+      return;
+    }
+
+    for(const p of plans){
+      const row = document.createElement('div');
+      row.className = 'edit-plan-row';
+
+      const timeInp = document.createElement('input');
+      timeInp.type = 'time';
+      timeInp.value = p.time || '';
+      timeInp.onchange = () => {
+        p.time = timeInp.value || '';
+        state.plan[key] = sortPlan(state.plan[key]);
+        save(); renderToday(); renderWeekEdit(); renderWeekChips();
+      };
+
+      const textInp = document.createElement('input');
+      textInp.type = 'text';
+      textInp.value = p.text;
+      textInp.oninput = () => { p.text = textInp.value; };
+      textInp.onblur  = () => { save(); renderToday(); };
+
+      const del = document.createElement('button');
+      del.className = 'plan-del';
+      del.textContent = '×';
+      del.title = 'Удалить';
+      del.onclick = () => {
+        state.plan[key] = state.plan[key].filter(x => x.id !== p.id);
+        save(); renderToday(); renderWeekEdit(); renderWeekChips();
+      };
+
+      row.append(timeInp, textInp, del);
+      list.appendChild(row);
+    }
+
+    // кнопка «добавить пустое дело» в конец списка
+    const addRow = document.createElement('div');
+    addRow.className = 'add-plan';
+    addRow.innerHTML = `
+      <input type="time" id="weekNewTime">
+      <input type="text" id="weekNewText" placeholder="Новое дело..." autocomplete="off">
+      <button class="add-plan-btn" title="Добавить">+</button>`;
+    const addTime = addRow.querySelector('#weekNewTime');
+    const addText = addRow.querySelector('#weekNewText');
+    addRow.querySelector('.add-plan-btn').onclick = () => {
+      const t = addText.value.trim();
+      if(!t){ addText.focus(); return; }
+      state.plan[key].push({ id: uid('p'), time: addTime.value || '', text: t });
+      state.plan[key] = sortPlan(state.plan[key]);
+      save(); renderToday(); renderWeekEdit(); renderWeekChips();
+    };
+    addText.addEventListener('keydown', e => {
+      if(e.key === 'Enter') addRow.querySelector('.add-plan-btn').click();
+    });
+    list.appendChild(addRow);
+  }
+
+  // ==================================================
+  // ============ HABITS (без изменений) ==============
+  // ==================================================
+
   function habitPeriodStats(h, days){
     const today = startOfDay(new Date());
     let done = 0, missed = 0;
@@ -512,7 +764,6 @@
     return streak;
   }
 
-  // ---------- RENDER: HABITS ----------
   function renderHabits(){
     const list = $('habitsList');
     list.innerHTML = '';
@@ -622,7 +873,10 @@
     save(); renderAll();
   }
 
-  // ---------- RENDER: STATS ----------
+  // ==================================================
+  // ============== STATS (без изменений) =============
+  // ==================================================
+
   function renderStats(){
     const weekDays = currentWeek();
     const monthDays = currentMonthDays();
@@ -648,7 +902,6 @@
     $('monthMissPct').textContent = `❌ ${moMissPct}%`;
     $('monthSub').textContent = mo.total ? `${mo.done} из ${mo.total}` : 'нет данных';
 
-    // per-habit
     const list = $('habitStatsList');
     list.innerHTML = '';
     if(!state.habits.length){
@@ -689,7 +942,6 @@
     renderCalendar();
   }
 
-  // ---------- RENDER: MONTH CALENDAR ----------
   function renderCalendar(){
     const chips = $('calChips');
     chips.innerHTML = '';
@@ -725,7 +977,6 @@
       return renderCalendar();
     }
 
-    // summary
     let totalDone = 0, totalMissed = 0;
     const grid = $('calGrid');
     grid.innerHTML = '';
@@ -775,9 +1026,7 @@
           if(h.history[k]) doneCount++;
           else missedCount++;
         }
-        if(doneCount + missedCount === 0){
-          cell.classList.add('na');
-        }
+        if(doneCount + missedCount === 0) cell.classList.add('na');
       }
 
       const total = doneCount + missedCount;
@@ -785,25 +1034,22 @@
         totalDone += doneCount;
         totalMissed += missedCount;
         const pct = Math.round(doneCount / total * 100);
-        if(pct === 100){
-          cell.classList.add('full');
-        } else if(pct === 0){
-          cell.classList.add('none');
-        } else {
-          cell.style.setProperty('--done', pct + '%');
-        }
+        if(pct === 100) cell.classList.add('full');
+        else if(pct === 0) cell.classList.add('none');
+        else cell.style.setProperty('--done', pct + '%');
       }
       grid.appendChild(cell);
     }
 
     const sumTotal = totalDone + totalMissed;
     const sumPct = sumTotal ? Math.round(totalDone / sumTotal * 100) : 0;
-    $('calSummary').textContent = sumTotal
-      ? `✅ ${sumPct}% · ❌ ${100 - sumPct}%`
-      : '';
+    $('calSummary').textContent = sumTotal ? `✅ ${sumPct}% · ❌ ${100 - sumPct}%` : '';
   }
 
-  // ---------- RENDER: THOUGHTS ----------
+  // ==================================================
+  // ============== THOUGHTS (без изменений) ==========
+  // ==================================================
+
   function renderThoughts(){
     const list = $('thoughtsList');
     list.innerHTML = '';
@@ -845,21 +1091,23 @@
 
   function renderAll(){
     renderHeader();
+    renderToday();
+    renderWeekChips();
+    renderWeekEdit();
     renderHabits();
     renderStats();
     renderThoughts();
   }
 
-  // ---------- ADD HABIT ----------
+  // ---------- HABITS ACTIONS ----------
   function addHabit(){
     const nameInput = $('nameInput');
     const emojiInput = $('emojiInput');
     const name = nameInput.value.trim();
     if(!name){ nameInput.focus(); return; }
     if(state.habits.length >= 20){ alert('Максимум 20 привычек'); return; }
-
     state.habits.push({
-      id: 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      id: uid('h'),
       name,
       emoji: emojiInput.value.trim() || '✅',
       createdAt: dateKey(startOfDay(new Date())),
@@ -872,21 +1120,18 @@
     nameInput.focus();
   }
 
-  // ---------- THOUGHTS ----------
+  // ---------- THOUGHTS ACTION ----------
   function saveThought(){
     const input = $('thoughtInput');
     const text = input.value.trim();
     if(!text) return;
-    state.thoughts.push({
-      id: 't_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
-      text, createdAt: Date.now()
-    });
+    state.thoughts.push({ id: uid('t'), text, createdAt: Date.now() });
     input.value = '';
     $('saveThought').disabled = true;
     save(); renderThoughts();
   }
 
-  // ---------- NOTIFICATIONS (via Service Worker) ----------
+  // ---------- NOTIFICATIONS ----------
   async function ensureNotifPermission(){
     if(!('Notification' in window)) return false;
     if(Notification.permission === 'granted') return true;
@@ -896,30 +1141,25 @@
       return p === 'granted';
     } catch(e){ return false; }
   }
-
   async function showNotification(title, body, tag){
     if(!('Notification' in window) || Notification.permission !== 'granted') return;
     try {
       const reg = await navigator.serviceWorker.ready;
       await reg.showNotification(title, {
-        body,
-        tag: tag || 'reminder',
+        body, tag: tag || 'reminder',
         icon: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Crect width=%22512%22 height=%22512%22 rx=%22112%22 fill=%22%236366f1%22/%3E%3Cpath d=%22M140 260 L220 340 L380 180%22 stroke=%22white%22 stroke-width=%2248%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 fill=%22none%22/%3E%3C/svg%3E',
         badge: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Crect width=%22512%22 height=%22512%22 fill=%22%236366f1%22/%3E%3C/svg%3E',
         data: { url: location.href }
       });
     } catch(e){ console.warn('notify error', e); }
   }
-
   function checkReminders(){
     if(!('Notification' in window) || Notification.permission !== 'granted') return;
     const now = new Date();
     const hhmm = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
     const today = dateKey(now);
-
     for(const h of state.habits){
-      if(!h.reminderTime) continue;
-      if(h.reminderTime !== hhmm) continue;
+      if(!h.reminderTime || h.reminderTime !== hhmm) continue;
       const key = h.id + ':' + today;
       if(state.lastNotified[key]) continue;
       state.lastNotified[key] = true;
@@ -937,61 +1177,48 @@
     if(panel) panel.classList.add('active');
     if(btn) btn.classList.add('active');
 
-    const titles = { habits: 'Привычки', stats: 'Статистика', thoughts: 'Мысли' };
+    const titles = { plan:'План', habits:'Привычки', stats:'Статистика', thoughts:'Мысли' };
     $('pageTitle').textContent = titles[name] || '';
     renderHeader();
 
+    if(name === 'plan'){ renderToday(); renderWeekChips(); renderWeekEdit(); }
+    if(name === 'habits') renderHabits();
     if(name === 'stats') renderStats();
     if(name === 'thoughts') renderThoughts();
-    if(name === 'habits') renderHabits();
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // ---------- PWA ----------
-  function isStandalone(){
-    return window.navigator.standalone === true
-      || window.matchMedia('(display-mode: standalone)').matches;
-  }
-  function isIOS(){
-    return /iPad|iPhone|iPod/.test(navigator.userAgent)
-      || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  }
-
   async function registerSW(){
-    if(!('serviceWorker' in navigator)) return null;
-    try {
-      const reg = await navigator.serviceWorker.register('./sw.js', { scope: './' });
-      return reg;
-    } catch(e){ console.warn('SW reg failed', e); return null; }
-  }
-
-  function setupInstallHint(){
-    const hint = $('installHint');
-    if(!hint) return;
-    const dismissed = localStorage.getItem('installHintDismissed') === '1';
-    if(isIOS() && !isStandalone() && !dismissed){
-      hint.hidden = false;
-      hint.querySelector('button').addEventListener('click', () => {
-        localStorage.setItem('installHintDismissed', '1');
-      });
-    }
+    if(!('serviceWorker' in navigator)) return;
+    try { await navigator.serviceWorker.register('./sw.js', { scope: './' }); }
+    catch(e){ console.warn('SW reg failed', e); }
   }
 
   // ---------- INIT ----------
   async function init(){
     load();
     renderAll();
-    setupInstallHint();
 
+    // Plan
+    $('planAddBtn').onclick = addTodayPlan;
+    $('planText').addEventListener('keydown', e => {
+      if(e.key === 'Enter') addTodayPlan();
+    });
+
+    // Habits
     $('addBtn').onclick = addHabit;
     $('nameInput').addEventListener('keydown', e => {
       if(e.key === 'Enter') addHabit();
     });
 
+    // Tabs
     document.querySelectorAll('.tab-btn').forEach(b => {
       b.onclick = () => switchTab(b.dataset.tab);
     });
 
+    // Thoughts
     const tInput = $('thoughtInput');
     const sBtn = $('saveThought');
     tInput.addEventListener('input', () => { sBtn.disabled = !tInput.value.trim(); });
@@ -1002,12 +1229,9 @@
     setInterval(checkReminders, 20000);
     checkReminders();
 
-    // Тёмная тема — обновляем meta theme-color при смене системной темы
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    mq.addEventListener('change', () => {
-      document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
-        // meta уже с media-условиями, ничего не делаем — браузер сам переключит
-      });
+    // Обновление при возврате фокуса (смена дня и т.п.)
+    document.addEventListener('visibilitychange', () => {
+      if(!document.hidden) renderAll();
     });
   }
 
